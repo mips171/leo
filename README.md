@@ -1,4 +1,5 @@
 # Leo - Go Concurrency in 4 easy pieces
+[![Go Report Card](https://goreportcard.com/badge/github.com/mips171/leo)](https://goreportcard.com/report/github.com/mips171/leo)
 
 ![Leo Cheers](https://imgflip.com/s/meme/Leonardo-Dicaprio-Cheers.jpg)
 
