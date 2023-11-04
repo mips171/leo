@@ -38,6 +38,8 @@ func main() {
 	tasksGraph.Succeed("Task D", "Task B") // D runs after B
 	tasksGraph.Succeed("Task D", "Task C") // D also runs after C
 
+	tasksGraph.Print()
+
 	// Step 4. Create an executor to run the graph
 	executor := leo.NewExecutor(tasksGraph)
 	fmt.Println("Executing graph in a loop...")

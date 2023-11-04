@@ -3,8 +3,6 @@
 
 ![Leo Cheers](https://imgflip.com/s/meme/Leonardo-Dicaprio-Cheers.jpg)
 
-Inspired by [TaskFlow](https://github.com/taskflow/taskflow) after watching their CppCon talk.
-
 ## Install
 Run `go get github.com/mips171/leo`
 
