@@ -38,6 +38,7 @@ func main() {
 	tasksGraph.Succeed("Task D", "Task B") // D runs after B
 	tasksGraph.Succeed("Task D", "Task C") // D also runs after C
 
+	// Optionally print the graph to help with debugging
 	tasksGraph.Print()
 
 	// Step 4. Create an executor to run the graph
