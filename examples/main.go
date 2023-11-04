@@ -1,4 +1,4 @@
-package leo
+package main
 
 import (
 	"fmt"
