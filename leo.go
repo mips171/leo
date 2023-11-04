@@ -26,16 +26,6 @@ func TaskGraph() *Graph {
 	}
 }
 
-func (g Graph) Print() {
-	for _, node := range g.nodes {
-		fmt.Printf("%s -> ", node.name)
-		for _, child := range node.children {
-			fmt.Printf("%s, ", child.name)
-		}
-		fmt.Println()
-	}
-}
-
 func (g *Graph) Add(name string, task TaskFunc) {
 	if _, exists := g.nodes[name]; !exists {
 		g.nodes[name] = &Node{
@@ -45,13 +35,6 @@ func (g *Graph) Add(name string, task TaskFunc) {
 			name:     name,
 		}
 		g.startNodes = append(g.startNodes, g.nodes[name])
-	}
-}
-
-// Conditionally takes a node and a condition then executes that node in the graph if the condition is true
-func (g *Graph) Conditionally(name string, task TaskFunc, condition bool) {
-	if condition {
-		g.Add(name, task)
 	}
 }
 
@@ -159,6 +142,16 @@ func (e *Executor) Execute() error {
 		return nil
 	case err := <-errors:
 		return err
+	}
+}
+
+func (g Graph) Print() {
+	for _, node := range g.nodes {
+		fmt.Printf("%s -> ", node.name)
+		for _, child := range node.children {
+			fmt.Printf("%s, ", child.name)
+		}
+		fmt.Println()
 	}
 }
 
