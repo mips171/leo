@@ -74,9 +74,7 @@ All tasks executed successfully.
 ```
 
 ## Lore
-
-I have dealt with dependency resolution problems in the past, and at the time wanted an easy way to just set up my tasks and run them indefinitely as a service, letting the software handle scheduling as defined by me but interleaving tasks when possible for maximum concurrency. For example, updating firmware on live systems normally requires things to be done in a certain order. I saw that TaskFlow could do that easily, and immediately after watching their CppCon talk and demo I knew I had to implement it in Go. I have not looked, there may already be something else out there that does this, but Leo was designed to be simple and what I need. 
-If it's useful for you too, please consider giving it a star, PR or a mention!
+I have dealt with dependency resolution problems in the past, and at the time wanted an easy way to just set up my tasks and run them indefinitely as a service, letting the software handle scheduling as defined by me but interleaving tasks when possible for maximum concurrency. For example, updating firmware on live systems normally requires things to be done in a certain order. I saw that TaskFlow could do that easily, and immediately after watching their CppCon talk and demo I knew I had to implement it in Go. I have not looked, there may already be something else out there that does this, but Leo was designed to be simple and what I need. If it's useful for you too, please consider giving it a star, PR or a mention!
 
 ## License
 Leo is licensed under the Apache 2.0 license as found in the LICENSE file.
