@@ -1,9 +1,9 @@
 package leo
 
 import (
-    "errors"
-    "fmt"
-    "sync"
+	"errors"
+	"fmt"
+	"sync"
 )
 
 type TaskFunc func() error
@@ -94,6 +94,7 @@ func NewExecutor(graph *Graph) *Executor {
 func (e *Executor) Execute() error {
     var wg sync.WaitGroup
     inDegree := make(map[*Node]int)
+    mu := sync.Mutex{}
     ready := make(chan *Node, len(e.graph.nodes))
     errors := make(chan error, 1)
     finished := make(chan struct{})
@@ -102,9 +103,7 @@ func (e *Executor) Execute() error {
         inDegree[node] = len(node.parents)
         if inDegree[node] == 0 {
             wg.Add(1)
-            go func(n *Node) {
-                ready <- n
-            }(node)
+            ready <- node
         }
     }
 
@@ -113,29 +112,32 @@ func (e *Executor) Execute() error {
         close(finished)
     }()
 
-    go func() {
-        for node := range ready {
-            go func(n *Node) {
-                defer wg.Done()
-                if err := n.task(); err != nil {
+    for i := 0; i < cap(ready); i++ {
+        go func() {
+            for node := range ready {
+                if err := node.task(); err != nil {
                     select {
-                    case errors <- fmt.Errorf("error executing node %s: %w", n.name, err):
+                    case errors <- fmt.Errorf("error executing node %s: %w", node.name, err):
                     default:
                         // If an error is already recorded, we ignore subsequent errors
                     }
-                    return
+                    wg.Done()
+                    continue
                 }
 
-                for _, child := range n.children {
+                for _, child := range node.children {
+                    mu.Lock()
                     inDegree[child]--
                     if inDegree[child] == 0 {
                         wg.Add(1)
                         ready <- child
                     }
+                    mu.Unlock()
                 }
-            }(node)
-        }
-    }()
+                wg.Done()
+            }
+        }()
+    }
 
     select {
     case <-finished:
