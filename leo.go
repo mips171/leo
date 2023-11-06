@@ -1,9 +1,9 @@
 package leo
 
 import (
-	"errors"
-	"fmt"
-	"sync"
+    "errors"
+    "fmt"
+    "sync"
 )
 
 type TaskFunc func() error
@@ -94,7 +94,6 @@ func NewExecutor(graph *Graph) *Executor {
 func (e *Executor) Execute() error {
     var wg sync.WaitGroup
     inDegree := make(map[*Node]int)
-    mu := sync.Mutex{}
     ready := make(chan *Node, len(e.graph.nodes))
     errors := make(chan error, 1)
     finished := make(chan struct{})
@@ -103,7 +102,9 @@ func (e *Executor) Execute() error {
         inDegree[node] = len(node.parents)
         if inDegree[node] == 0 {
             wg.Add(1)
-            ready <- node
+            go func(n *Node) {
+                ready <- n
+            }(node)
         }
     }
 
@@ -112,32 +113,29 @@ func (e *Executor) Execute() error {
         close(finished)
     }()
 
-    for i := 0; i < cap(ready); i++ {
-        go func() {
-            for node := range ready {
-                if err := node.task(); err != nil {
+    go func() {
+        for node := range ready {
+            go func(n *Node) {
+                defer wg.Done()
+                if err := n.task(); err != nil {
                     select {
-                    case errors <- fmt.Errorf("error executing node %s: %w", node.name, err):
+                    case errors <- fmt.Errorf("error executing node %s: %w", n.name, err):
                     default:
                         // If an error is already recorded, we ignore subsequent errors
                     }
-                    wg.Done()
-                    continue
+                    return
                 }
 
-                for _, child := range node.children {
-                    mu.Lock()
+                for _, child := range n.children {
                     inDegree[child]--
                     if inDegree[child] == 0 {
                         wg.Add(1)
                         ready <- child
                     }
-                    mu.Unlock()
                 }
-                wg.Done()
-            }
-        }()
-    }
+            }(node)
+        }
+    }()
 
     select {
     case <-finished:
