@@ -42,7 +42,7 @@ tasks.Add("Task D", taskFunc("Task D"))
 // and Task D will run after both Task B and Task C complete.
 tasks.Precede("Task A", "Task B") // A runs before B
 tasks.Precede("Task A", "Task C") // A also runs before C
-tasks.Succeed("Task D", "Task B") // D runs after C
+tasks.Succeed("Task D", "Task B") // D runs after B
 tasks.Succeed("Task D", "Task C") // D also runs after C
 
 // Step 4: Create an executor to run the tasks
